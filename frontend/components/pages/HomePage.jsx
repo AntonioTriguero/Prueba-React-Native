@@ -1,42 +1,48 @@
-import { View, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { BookList } from "../BookList";
-import Icon from "react-native-vector-icons/Entypo";
 import Constants from "expo-constants";
+import { Background } from "../Background";
+import { Header } from "../Header";
+import { useState } from "react";
+import { DetailsModal } from "./DetailsModal";
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+//Página principal
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 export function HomePage() {
+    //Visibilidad del modal de detalles
+    const [modalVisible, setModalVisible] = useState(false);
+    const [bookId, setBookId] = useState(bookId);
+
     return (
         <>
-            <Text
-                style={{
-                    backgroundColor: "#FFA43E",
-                    width: "100%",
-                    height: 300,
-                    position: "absolute",
-                    zIndex: 2,
-                }}
-            ></Text>
-            <View
-                style={{
-                    flex: 1,
-                    position: "relative",
-                    marginTop: Constants.statusBarHeight,
-                    zIndex: 1,
-                }}
-            >
-                <Text
-                    style={{
-                        paddingVertical: 10,
-                        textAlign: "center",
-                        color: "white",
-                        fontWeight: "bold",
-                        fontSize: 30,
-                    }}
-                >
+            <Background />
+            <View style={styles.container}>
+                <Header to={"/add"} iconName={"add-to-list"}>
+                    {" "}
                     TUS LIBROS
-                </Text>
-                <Icon name="add-to-list" color={"white"} size={25} style={{position: "absolute", top: 20, left: 340}}/>
-                <BookList />
+                </Header>
+                <BookList
+                    setBookId={setBookId}
+                    setModalVisible={setModalVisible}
+                />
             </View>
+            <DetailsModal
+                bookId={bookId}
+                setBookId={setBookId}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+            ></DetailsModal>
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: "relative",
+        marginTop: Constants.statusBarHeight,
+        zIndex: 1,
+    },
+});

@@ -1,22 +1,11 @@
 const { db } = require("../firebase");
 const { Router } = require("express");
+const fileUpload = require("express-fileupload");
+const fs = require("fs");
+const path = require("path");
+const sharp = require("sharp");
 
 const router = Router();
-
-//Ruta principal de la aplicación (en a prueba pone que sea get/books)
-router.get("/", async (req, res) => {
-    const querySnapshot = await db.collection("libros").get();
-
-    const books = querySnapshot.docs.map((doc) => {
-        const data = {
-            id: doc.id,
-            ...doc.data(),
-        };
-        return data;
-    });
-
-    res.send(books);
-});
 
 //Ruta que devuelve todos los libros
 router.get("/books", async (req, res) => {
@@ -44,12 +33,29 @@ router.get("/books/:id", async (req, res) => {
 });
 
 //Añadir un nuevo libro
-router.post("/books", async (req, res) => {
+router.post("/books", fileUpload(), async (req, res) => {
+    // const directory = path.join(__dirname, "../photos");
+
+    // const sharpPhoto = sharp(req.files.cover.data);
+    // sharpPhoto.resize(500);
+    const fileName = req.body.title + ".jpg";
+    const filePath = "src/photos/" + fileName;
+    // const filePath = path.join(directory, fileName);
+    // await sharpPhoto.toFile(filePath);
+
+    fs.writeFile(filePath, req.files.cover.data, function (err) {
+        if (err) throw err;
+        console.log("File saved.");
+    });
+
+    // const photo = "http://192.168.1.38:3000/photos/" + fileName;
+
     const newBook = {
         title: req.body.title,
         author: req.body.author,
         genre: req.body.genre,
         pages: req.body.pages,
+        cover: filePath,
     };
 
     await db.collection("libros").add(newBook);
@@ -57,7 +63,7 @@ router.post("/books", async (req, res) => {
     res.send("Se ha creado un nuevo libro");
 });
 
-//Acutalizar los datos de un libro
+//Actualizar los datos de un libro
 router.put("/books/:id", async (req, res) => {
     //Sacamos el doc del libro que queremos actualizar
     const doc = await db.collection("libros").doc(req.params.id).get();
