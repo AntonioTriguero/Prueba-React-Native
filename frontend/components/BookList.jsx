@@ -8,20 +8,25 @@ import {
     SafeAreaView,
     Dimensions,
     TouchableWithoutFeedback,
+    TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import { MotiView } from "moti";
 import Icon from "react-native-vector-icons/Entypo";
 import { DetailsModal } from "./pages/DetailsModal";
+import { Link } from "react-router-native";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Lista de libros para la página principal
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-export function BookList({ setBookId, setModalVisible }) {
-    //Datos de los libros
-    const [books, setBooks] = useState([]);
-
+export function BookList({
+    books,
+    setBooks,
+    setBookId,
+    setModalVisible,
+    setDeleteModal,
+}) {
     //fetch a localhost:3000/books y guardamos la respuesta en books
     const fetchApi = async () => {
         const res = await axios.get("http://192.168.1.38:3000/books");
@@ -35,6 +40,7 @@ export function BookList({ setBookId, setModalVisible }) {
     //Creamos el render item para la FLatlist
     const renderItem = ({ item, index }) => (
         <MotiView
+            key={item.id}
             style={styles.bookCard}
             from={{ opacity: 0, translateY: 45 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -42,7 +48,7 @@ export function BookList({ setBookId, setModalVisible }) {
         >
             <TouchableWithoutFeedback
                 onPress={() => {
-                    setModalVisible(true)
+                    setModalVisible(true);
                     setBookId(item.id);
                 }}
             >
@@ -58,8 +64,17 @@ export function BookList({ setBookId, setModalVisible }) {
                         marginTop: 5,
                     }}
                 >
-                    <Icon color={"white"} name={"edit"} size={20} />
-                    <Icon color={"white"} name={"trash"} size={20} />
+                    <Link to={`/edit/${item.id}`}>
+                        <Icon color={"white"} name={"edit"} size={20} />
+                    </Link>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setDeleteModal(true);
+                            setBookId(item.id);
+                        }}
+                    >
+                        <Icon color={"white"} name={"trash"} size={20} />
+                    </TouchableOpacity>
                 </View>
             </View>
         </MotiView>

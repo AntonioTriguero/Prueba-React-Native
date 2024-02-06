@@ -34,28 +34,30 @@ router.get("/books/:id", async (req, res) => {
 
 //Añadir un nuevo libro
 router.post("/books", fileUpload(), async (req, res) => {
-    // const directory = path.join(__dirname, "../photos");
+    const directory = path.join(__dirname, "../../public/photos");
+    const sharpPhoto = sharp(req.files.cover.data);
 
-    // const sharpPhoto = sharp(req.files.cover.data);
-    // sharpPhoto.resize(500);
-    const fileName = req.body.title + ".jpg";
-    const filePath = "src/photos/" + fileName;
-    // const filePath = path.join(directory, fileName);
-    // await sharpPhoto.toFile(filePath);
+    // Redimensionamos la imagen a 500px.
+    sharpPhoto.resize(500);
 
-    fs.writeFile(filePath, req.files.cover.data, function (err) {
-        if (err) throw err;
-        console.log("File saved.");
-    });
+    // Establecer un fileName, que será el nombre final del archivo nuevo.
+    const fileName = Math.ceil(Math.random() * 10000000) + ".jpg";
 
-    // const photo = "http://192.168.1.38:3000/photos/" + fileName;
+    // Crear la ruta absoluta al archivo.
+    const filePath = path.join(directory, fileName);
+
+    // Guardamos la foto.
+    await sharpPhoto.toFile(filePath);
+
+    // Retornamos el nombre del archivo.
+    const photo = "http://192.168.1.38:3000/photos/" + fileName;
 
     const newBook = {
         title: req.body.title,
         author: req.body.author,
         genre: req.body.genre,
         pages: req.body.pages,
-        cover: filePath,
+        cover: photo,
     };
 
     await db.collection("libros").add(newBook);

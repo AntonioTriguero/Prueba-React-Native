@@ -5,6 +5,7 @@ import { Background } from "../Background";
 import { Header } from "../Header";
 import { useState } from "react";
 import { DetailsModal } from "./DetailsModal";
+import { DeleteModal } from "./DeleteModal";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Página principal
@@ -13,7 +14,16 @@ import { DetailsModal } from "./DetailsModal";
 export function HomePage() {
     //Visibilidad del modal de detalles
     const [modalVisible, setModalVisible] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [books, setBooks] = useState([]);
     const [bookId, setBookId] = useState(bookId);
+
+    function deleteBook () {
+        const filteredBooks = books.filter(
+            (book) => book.id !== bookId
+        );
+        setBooks(filteredBooks);
+    }
 
     return (
         <>
@@ -24,8 +34,11 @@ export function HomePage() {
                     TUS LIBROS
                 </Header>
                 <BookList
+                    books={books}
+                    setBooks={setBooks}
                     setBookId={setBookId}
                     setModalVisible={setModalVisible}
+                    setDeleteModal={setDeleteModal}
                 />
             </View>
             <DetailsModal
@@ -34,6 +47,13 @@ export function HomePage() {
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
             ></DetailsModal>
+            <DeleteModal
+                deleteBook={deleteBook}
+                bookId={bookId}
+                setBookId={setBookId}
+                deleteModal={deleteModal}
+                setDeleteModal={setDeleteModal}
+            ></DeleteModal>
         </>
     );
 }

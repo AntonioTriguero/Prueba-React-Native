@@ -2,14 +2,17 @@ import { Background } from "../Background";
 import { Header } from "../Header";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Constants from "expo-constants";
-import { BooksForm } from "../form/BooksForm";
+import { AddBookForm } from "../form/AddBookForm";
 import Icon from "react-native-vector-icons/Entypo";
+import { useState } from "react";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Página de añadir libro
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 export function AddBookPage() {
+    const [payload, setPayload] = useState({});
+
     return (
         <>
             <Background />
@@ -27,13 +30,17 @@ export function AddBookPage() {
                         />
                         {/*aqui hacer un image picker */}
                         <View style={styles.imgContainer}></View>
-                        <BooksForm></BooksForm>
+                        <AddBookForm></AddBookForm>
                     </View>
                 </View>
             </View>
         </>
     );
 }
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+//Estilos
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
     container: {

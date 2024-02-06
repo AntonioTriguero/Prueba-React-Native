@@ -25,7 +25,6 @@ export function DetailsModal({
     const [book, setBook] = useState({});
 
     const fetchApi = async () => {
-        console.log(bookId);
         const res = await axios.get(`http://192.168.1.38:3000/books/` + bookId);
         setBook(res.data);
     };
@@ -68,10 +67,9 @@ const styles = StyleSheet.create({
     container: {
         height: Dimensions.get("window").height / 1.5,
         width: Dimensions.get("window").width / 1.4,
-        backgroundColor: "green",
         position: "absolute",
         top: 155,
-        left: 50,
+        left: 57,
         backgroundColor: "#FFA43E",
         borderRadius: 20,
         padding: 10,

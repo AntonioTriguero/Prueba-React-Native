@@ -11,7 +11,7 @@ app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 
-const staticDirectory = path.join(__dirname, "./photos");
+const staticDirectory = path.join(__dirname, "../public");
 app.use(express.static(staticDirectory));
 
 app.use(router);

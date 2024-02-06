@@ -5,7 +5,7 @@ import { Controller } from "react-hook-form";
 //Inputs del formulario de añadir libro
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-export function ControllerInput({ctrl, inputName, children}) {
+export function ControllerInput({ editValue, ctrl, inputName, children }) {
     return (
         <>
             <Text style={styles.text}>{children}</Text>
@@ -13,16 +13,21 @@ export function ControllerInput({ctrl, inputName, children}) {
                 control={ctrl}
                 render={({ field }) => (
                     <TextInput
+                        defaultValue={editValue}
                         {...field}
                         style={styles.textInput}
                     />
                 )}
-                name= {inputName}
+                name={inputName}
                 rules={{ required: "Este campo es obligatorio" }}
             />
         </>
     );
 }
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+//Estilos
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
     text: { color: "#FFA43E", fontWeight: "bold" },
@@ -31,5 +36,5 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 5,
         marginVertical: 5,
-    }
+    },
 });
