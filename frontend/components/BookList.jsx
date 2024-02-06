@@ -7,7 +7,8 @@ import {
     FlatList,
     SafeAreaView,
     Dimensions,
-    TouchableOpacity,
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from "react-native";
 import axios from "axios";
 import { MotiView } from "moti";
@@ -47,14 +48,14 @@ export function BookList({
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ delay: 200 + index * 200 }}
         >
-            <TouchableOpacity
+            <TouchableWithoutFeedback
                 onPress={() => {
                     setModalVisible(true);
                     setBookId(item.id);
                 }}
             >
                 <Image source={{ uri: item.cover }} style={styles.image} />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
             <View style={{ alignItems: "center" }}>
                 <Text style={styles.title}>{item.title}</Text>
                 <View

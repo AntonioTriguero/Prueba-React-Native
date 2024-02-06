@@ -4,7 +4,7 @@ import {
     View,
     StyleSheet,
     Dimensions,
-    TouchableOpacity,
+    TouchableWithoutFeedback,
     Image,
 } from "react-native";
 import Constants from "expo-constants";
@@ -53,16 +53,16 @@ export function AddBookPage() {
                             size={25}
                         />
                         {!imagePicked && (
-                            <TouchableOpacity
+                            <TouchableWithoutFeedback
                                 onPress={() => {
                                     pickImage();
                                 }}
                             >
                                 <View style={styles.imgContainer}></View>
-                            </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                         )}
                         {imagePicked && (
-                            <TouchableOpacity
+                            <TouchableWithoutFeedback
                                 onPress={() => {
                                     pickImage();
                                 }}
@@ -71,7 +71,7 @@ export function AddBookPage() {
                                     source={{ uri: imagePicked }}
                                     style={styles.imgContainer}
                                 ></Image>
-                            </TouchableOpacity>
+                            </TouchableWithoutFeedback>
                         )}
                         <AddBookForm
                             payload={payload}

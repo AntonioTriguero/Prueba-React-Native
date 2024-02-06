@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Dimensions,
     Image,
+    TouchableWithoutFeedback
 } from "react-native";
 import Constants from "expo-constants";
 import { EditBookForm } from "../form/EditBookForm";
@@ -103,7 +104,7 @@ export function EditPage() {
                 </Header>
                 <View style={styles.compContainer}>
                     <View style={styles.card}>
-                        <TouchableOpacity
+                        <TouchableWithoutFeedback
                             onPress={() => {
                                 pickImage();
                             }}
@@ -112,7 +113,7 @@ export function EditPage() {
                                 style={styles.imgContainer}
                                 source={{ uri: imagePicked }}
                             />
-                        </TouchableOpacity>
+                        </TouchableWithoutFeedback>
                         <EditBookForm
                             editBook={editBook}
                             id={id}
