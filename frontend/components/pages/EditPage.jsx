@@ -1,25 +1,98 @@
 import { Background } from "../Background";
 import { Header } from "../Header";
-import { View, StyleSheet, Dimensions, Image } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    Image,
+} from "react-native";
 import Constants from "expo-constants";
 import { EditBookForm } from "../form/EditBookForm";
-import Icon from "react-native-vector-icons/Entypo";
 import { useParams } from "react-router-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import { useNavigate } from "react-router-native";
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+//Página para editar el libro
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 export function EditPage() {
     const { id } = useParams();
     const [book, setBook] = useState({});
+    const [payload, setPayload] = useState({});
+    const [imagePicked, setImagePicked] = useState(imagePicked);
+    const navigate = useNavigate();
 
+    //Fetch para recoger los datos actuales
     const fetchApi = async () => {
         const res = await axios.get(`http://192.168.1.38:3000/books/` + id);
+
         setBook(res.data);
+        setImagePicked(res.data.cover);
+        setPayload({
+            ...payload,
+            title: res.data.title,
+            author: res.data.author,
+            pages: res.data.pages,
+            genre: res.data.genre,
+        });
     };
 
     useEffect(() => {
         fetchApi();
     }, []);
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [3, 4],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImagePicked(result.assets[0].uri);
+
+            const fileUri = result.assets[0].uri;
+            const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+            if (!fileInfo.exists) {
+                throw new Error("El archivo no existe.");
+            }
+
+            const fileExtension = fileInfo.uri.split(".").pop(); // Obtenemos la extensión del archivo
+            const fileType = `image/${fileExtension}`; // Establecemos el tipo de archivo
+            setPayload({
+                ...payload,
+                cover: {
+                    uri: fileUri,
+                    name: `cover.${fileExtension}`,
+                    type: fileType,
+                },
+            });
+        }
+    };
+
+    const editBook = async () => {
+        const formData = new FormData();
+        formData.append("title", payload.title);
+        formData.append("author", payload.author);
+        formData.append("genre", payload.genre);
+        formData.append("pages", payload.pages);
+        formData.append("cover", payload.cover);
+
+
+        await axios.put(`http://192.168.1.38:3000/books/` + id, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        navigate("/");
+    };
 
     return (
         <>
@@ -30,15 +103,33 @@ export function EditPage() {
                 </Header>
                 <View style={styles.compContainer}>
                     <View style={styles.card}>
-                        {/*aqui hacer un image picker */}
-                        <Image style= {styles.imgContainer}source={{ uri: book.cover }} />
-                        <EditBookForm book={book}></EditBookForm>
+                        <TouchableOpacity
+                            onPress={() => {
+                                pickImage();
+                            }}
+                        >
+                            <Image
+                                style={styles.imgContainer}
+                                source={{ uri: imagePicked }}
+                            />
+                        </TouchableOpacity>
+                        <EditBookForm
+                            editBook={editBook}
+                            id={id}
+                            payload={payload}
+                            setPayload={setPayload}
+                            book={book}
+                        ></EditBookForm>
                     </View>
                 </View>
             </View>
         </>
     );
 }
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+//Estilos
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 const styles = StyleSheet.create({
     container: {

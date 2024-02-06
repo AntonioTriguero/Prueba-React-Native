@@ -5,13 +5,15 @@ import  PickerSelect  from "react-native-picker-select";
 //Select options
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-export function GenreSelect({options, placeholder, children}) {
+export function GenreSelect({payload, setPayload, options, placeholder, children}) {
     return (
         <>
             <Text style={styles.text}>{children}</Text>
             <View style={styles.container}>
                 <PickerSelect
-                    onValueChange={(value) => console.log(value)}
+                    onValueChange={(value) => {
+                        setPayload({...payload, genre: value})
+                    }}
                     placeholder={placeholder}
                     items={options}
                 />

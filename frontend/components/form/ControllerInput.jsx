@@ -5,7 +5,15 @@ import { Controller } from "react-hook-form";
 //Inputs del formulario de añadir libro
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-export function ControllerInput({ editValue, ctrl, inputName, children }) {
+export function ControllerInput({
+    payload,
+    setPayload,
+    editValue,
+    ctrl,
+    inputName,
+    children,
+    keyboardType,
+}) {
     return (
         <>
             <Text style={styles.text}>{children}</Text>
@@ -13,9 +21,15 @@ export function ControllerInput({ editValue, ctrl, inputName, children }) {
                 control={ctrl}
                 render={({ field }) => (
                     <TextInput
+                        autoFocus={false}
+                        keyboardType={keyboardType}
+                        onChangeText={(text) => {
+                            setPayload({ ...payload, [inputName]: text });
+                        }}
                         defaultValue={editValue}
                         {...field}
                         style={styles.textInput}
+                        rules={{ required: "Este campo es obligatorio" }}
                     />
                 )}
                 name={inputName}

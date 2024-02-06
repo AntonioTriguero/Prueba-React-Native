@@ -66,12 +66,34 @@ router.post("/books", fileUpload(), async (req, res) => {
 });
 
 //Actualizar los datos de un libro
-router.put("/books/:id", async (req, res) => {
+router.put("/books/:id", fileUpload(), async (req, res) => {
     //Sacamos el doc del libro que queremos actualizar
     const doc = await db.collection("libros").doc(req.params.id).get();
 
+    const directory = path.join(__dirname, "../../public/photos");
+    const fileName = Math.ceil(Math.random() * 10000000) + ".jpg";
+    const filePath = path.join(directory, fileName);
+    
+    if (req.files) {
+        const sharpPhoto = sharp(req.files.cover.data);
+
+        // Redimensionamos la imagen a 500px.
+        sharpPhoto.resize(500);
+
+        // Establecer un fileName, que será el nombre final del archivo nuevo.
+
+        // Crear la ruta absoluta al archivo.
+
+        // Guardamos la foto.
+        await sharpPhoto.toFile(filePath);
+
+        // Retornamos el nombre del archivo.
+    }
+    const photo = "http://192.168.1.38:3000/photos/" + fileName;
+
     //Sacamos los datos
     const data = doc.data();
+    console.log(data);
 
     //Actualizamos el libro de forma que si no cambias el dato, se quede como estaba
     const updatedBook = {
@@ -79,6 +101,7 @@ router.put("/books/:id", async (req, res) => {
         author: req.body.author || data.author,
         genre: req.body.genre || data.genre,
         pages: req.body.pages || data.pages,
+        cover: photo || data.cover,
     };
 
     //Actualizamos el libro

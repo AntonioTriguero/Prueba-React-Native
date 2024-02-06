@@ -1,23 +1,21 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm} from "react-hook-form";
 import {
     StyleSheet,
     SafeAreaView,
     View,
-    TextInput,
     Button,
     Dimensions,
-    Text,
 } from "react-native";
-import { useState, useEffect } from "react";
 import { ControllerInput } from "./ControllerInput";
 import { GenreSelect } from "./GenreSelect";
-import axios from "axios";
+import { useNavigate } from "react-router-native";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Formulario para añadir libro
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-export function EditBookForm({ book }) {
+export function EditBookForm({ editBook, id, payload, setPayload, book }) {
+    const navigate = useNavigate();
     //Formulario
     const {
         control,
@@ -27,26 +25,20 @@ export function EditBookForm({ book }) {
 
     //Opciones de género
     const options = [
-        { label: "Fantasia", value: "fantasia" },
-        { label: "Ciencia Ficción", value: "cienciaFiccion" },
-        { label: "Acción", value: "accion" },
-        { label: "Terror", value: "terror" },
-        { label: "Comedia", value: "comedia" },
-        { label: "Romance", value: "romance" },
+        { label: "Fantasia", value: "Fantasia", key: "f" },
+        { label: "Ciencia Ficción", value: "Ciencia Ficción", key: "cf" },
+        { label: "Acción", value: "Acción", key: "a" },
+        { label: "Terror", value: "Terror", key: "t" },
+        { label: "Comedia", value: "Comedia", key: "c" },
+        { label: "Romance", value: "Romance", key: "r" },
     ];
-
-    //Submited data me sirve para hacer el fetch y crear el nuevo libro
-    const [submittedData, setSubmittedData] = useState(null);
-
-    const onSubmit = (data) => {
-        // Simulate form submission
-        setSubmittedData(data);
-    };
 
     return (
         <SafeAreaView>
             <View style={styles.container}>
                 <ControllerInput
+                    payload={payload}
+                    setPayload={setPayload}
                     editValue={book.title}
                     ctrl={control}
                     inputName={"title"}
@@ -54,6 +46,8 @@ export function EditBookForm({ book }) {
                     Título:
                 </ControllerInput>
                 <ControllerInput
+                    payload={payload}
+                    setPayload={setPayload}
                     editValue={book.author}
                     ctrl={control}
                     inputName={"author"}
@@ -61,13 +55,21 @@ export function EditBookForm({ book }) {
                     Autor:
                 </ControllerInput>
                 <ControllerInput
+                    payload={payload}
+                    setPayload={setPayload}
                     editValue={`${book.pages}`}
                     ctrl={control}
                     inputName={"pages"}
+                    keyboardType={"numeric"}
                 >
                     Nº Páginas:
                 </ControllerInput>
-                <GenreSelect placeholder={{ label: book.genre }} options={options}>
+                <GenreSelect
+                    payload={payload}
+                    setPayload={setPayload}
+                    placeholder={{ label: book.genre, key: "placeholder"}}
+                    options={options}
+                >
                     Género:
                 </GenreSelect>
 
@@ -75,7 +77,7 @@ export function EditBookForm({ book }) {
                     <Button
                         color={"#FFA43E"}
                         title="Editar"
-                        onPress={handleSubmit(onSubmit)}
+                        onPress={() => handleSubmit(editBook())}
                     />
                 </View>
             </View>

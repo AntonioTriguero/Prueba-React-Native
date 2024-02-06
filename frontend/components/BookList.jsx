@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
     StyleSheet,
     View,
@@ -7,13 +7,11 @@ import {
     FlatList,
     SafeAreaView,
     Dimensions,
-    TouchableWithoutFeedback,
     TouchableOpacity,
 } from "react-native";
 import axios from "axios";
 import { MotiView } from "moti";
 import Icon from "react-native-vector-icons/Entypo";
-import { DetailsModal } from "./pages/DetailsModal";
 import { Link } from "react-router-native";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -30,7 +28,10 @@ export function BookList({
     //fetch a localhost:3000/books y guardamos la respuesta en books
     const fetchApi = async () => {
         const res = await axios.get("http://192.168.1.38:3000/books");
-        setBooks(res.data);
+        const sortedBooks = res.data.sort((a, b) =>
+            a.title.localeCompare(b.title)
+        );
+        setBooks(sortedBooks);
     };
 
     useEffect(() => {
@@ -46,14 +47,14 @@ export function BookList({
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ delay: 200 + index * 200 }}
         >
-            <TouchableWithoutFeedback
+            <TouchableOpacity
                 onPress={() => {
                     setModalVisible(true);
                     setBookId(item.id);
                 }}
             >
                 <Image source={{ uri: item.cover }} style={styles.image} />
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             <View style={{ alignItems: "center" }}>
                 <Text style={styles.title}>{item.title}</Text>
                 <View

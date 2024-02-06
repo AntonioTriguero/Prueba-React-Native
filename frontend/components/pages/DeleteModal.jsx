@@ -2,13 +2,10 @@ import {
     Modal,
     Text,
     View,
-    Image,
     TouchableOpacity,
     Dimensions,
     StyleSheet,
 } from "react-native";
-import Icon from "react-native-vector-icons/Entypo";
-import { useState, useEffect } from "react";
 import axios from "axios";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */

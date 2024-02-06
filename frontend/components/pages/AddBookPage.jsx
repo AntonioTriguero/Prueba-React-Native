@@ -1,10 +1,17 @@
 import { Background } from "../Background";
 import { Header } from "../Header";
-import { View, StyleSheet, Dimensions } from "react-native";
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    Image,
+} from "react-native";
 import Constants from "expo-constants";
 import { AddBookForm } from "../form/AddBookForm";
 import Icon from "react-native-vector-icons/Entypo";
 import { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 
 /*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 //Página de añadir libro
@@ -12,6 +19,22 @@ import { useState } from "react";
 
 export function AddBookPage() {
     const [payload, setPayload] = useState({});
+    const [imagePicked, setImagePicked] = useState("");
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [3, 4],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setImagePicked(result.assets[0].uri);
+            setPayload({ ...payload, cover: result.assets[0].uri });
+        }
+    };
 
     return (
         <>
@@ -20,6 +43,7 @@ export function AddBookPage() {
                 <Header to={"/"} iconName={"cross"}>
                     AÑADIR LIBRO
                 </Header>
+
                 <View style={styles.compContainer}>
                     <View style={styles.card}>
                         <Icon
@@ -28,9 +52,31 @@ export function AddBookPage() {
                             name={"attachment"}
                             size={25}
                         />
-                        {/*aqui hacer un image picker */}
-                        <View style={styles.imgContainer}></View>
-                        <AddBookForm></AddBookForm>
+                        {!imagePicked && (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    pickImage();
+                                }}
+                            >
+                                <View style={styles.imgContainer}></View>
+                            </TouchableOpacity>
+                        )}
+                        {imagePicked && (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    pickImage();
+                                }}
+                            >
+                                <Image
+                                    source={{ uri: imagePicked }}
+                                    style={styles.imgContainer}
+                                ></Image>
+                            </TouchableOpacity>
+                        )}
+                        <AddBookForm
+                            payload={payload}
+                            setPayload={setPayload}
+                        ></AddBookForm>
                     </View>
                 </View>
             </View>
